@@ -12,13 +12,14 @@ package projectFiles;
 public class productor extends Thread{
     
     private int storage;
+    private int dailyProduction;
     private int maxStorage;
     private int quantity;
     private int time;
     private int numProducers;
     private int maxProducers;
 
-    public productor(int storage, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
+    public productor(int storage, int dailyProducton, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
         
         this.storage = storage;
         this.maxStorage = maxStorage;

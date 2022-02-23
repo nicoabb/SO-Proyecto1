@@ -6,6 +6,7 @@
 package projectFiles;
 
 import com.google.gson.Gson;
+import java.util.concurrent.Semaphore;
 
 
 /**
@@ -21,6 +22,28 @@ public class Interfaz extends javax.swing.JFrame {
         initComponents();
         Gson gson = new Gson();
     }
+    
+    private boolean start;
+    
+    private int dayDuration;
+    public static volatile int daysPast;
+    private int daysToDeliver;
+    
+
+    //Contadores de piezas
+    public static volatile int patasDisp = 0;
+    public static volatile int tablasDisp = 0;
+    public static volatile int tornillosDisp = 0;
+    
+    //Contador de escritorios
+    public static volatile int pahlsDisp = 0;
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -275,9 +298,9 @@ public class Interfaz extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel5))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -402,9 +425,9 @@ public class Interfaz extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel6))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -438,7 +461,7 @@ public class Interfaz extends javax.swing.JFrame {
 
         jLabel15.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel15.setText("ESCRITORIOS PAHL ENSAMBLADOS: ");
+        jLabel15.setText("ESCRITORIOS PAHL DISPONIBLES: ");
 
         jScrollPane15.setViewportView(jTextPane15);
 
