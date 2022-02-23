@@ -9,14 +9,14 @@ package projectFiles;
  *
  * @author Nicolás Briceño y Christian Behrens
  */
-public class ensamblador {
+public class Ensamblador {
     
     private int time;
     private int numDesks;
     private int numAssemblers;
     private int maxAssemblers;
     
-    public void takeParts(productor storage) {
+    public void takeParts(Productor storage) {
         
     }
 

@@ -6,7 +6,16 @@
 package projectFiles;
 
 import com.google.gson.Gson;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,8 +28,58 @@ public class Interfaz extends javax.swing.JFrame {
      */
     public Interfaz() {
         initComponents();
-        Gson gson = new Gson();
+        GSONRead prueba = new GSONRead();
+        String[] algo = {"1", "2"};
+        prueba.main(algo);
     }
+
+    public class GSONRead {
+
+        public void main(String[] args) {
+
+            Gson gson = new Gson();
+
+            try {
+
+                System.out.println("Reading JSON from a file");
+                System.out.println("----------------------------");
+
+                FileReader r = new FileReader(GSONRead.class.getClassLoader().getResource("data.json").getPath().replaceAll("%20", " "));
+                System.out.println("no big deal");
+
+                //convert the json string back to object
+                String countryObj = gson.fromJson(r, String.class);
+
+                System.out.println("Name Of Country: " + countryObj);
+
+                //List listOfStates = countryObj.getListOfStates();
+                //for (int i = 0; i < listOfStates.size(); i++) {
+                //    System.out.println(listOfStates.get(i));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*
+    public class Main{
+        public void main(String[] args) {
+            String filePath = "../../test/files/data.json";
+            File input = ;
+            System.out.println(input.getAbsolutePath());
+            String path = input.getPath();
+            
+            try {
+                JsonElement fileElement = JsonParser.parseReader(new FileReader(input.getPath()));
+                JsonObject fileObject = fileElement.getAsJsonObject();
+                
+                //Extracting basic fields
+                String address = fileObject.get("days").getAsString();
+                System.out.println(address);
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
 
     /**
      * This method is called from within the constructor to initialize the form.

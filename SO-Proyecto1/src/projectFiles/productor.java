@@ -9,7 +9,7 @@ package projectFiles;
  *
  * @author Nicolás Briceño y Christian Behrens
  */
-public class productor {
+public class Productor {
     
     private int storage;
     private int maxStorage;
@@ -18,7 +18,7 @@ public class productor {
     private int numProducers;
     private int maxProducers;
 
-    public productor(int storage, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
+    public Productor(int storage, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
         
         this.storage = storage;
         this.maxStorage = maxStorage;
