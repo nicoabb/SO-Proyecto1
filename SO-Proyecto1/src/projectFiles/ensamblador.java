@@ -9,7 +9,7 @@ package projectFiles;
  *
  * @author Nicolás Briceño y Christian Behrens
  */
-public class ensamblador {
+public class ensamblador extends Thread {
     
     private int time;
     private int numDesks;

@@ -9,7 +9,7 @@ package projectFiles;
  *
  * @author Nicolás Briceño y Christian Behrens
  */
-public class productor {
+public class productor extends Thread{
     
     private int storage;
     private int maxStorage;
@@ -26,6 +26,7 @@ public class productor {
         this.time = time;
         this.numProducers = numProducers;
         this.maxProducers = maxProducers;
+        
     }
     
     public void callAssembler() {
