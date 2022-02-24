@@ -32,6 +32,10 @@ public class Interfaz extends javax.swing.JFrame {
          }
     }
     private boolean start;
+    private int tornillosDaily=30;
+    private int tablasDaily=1/3;
+    private int patasDaily=1/2;
+    
     
     private int dayDuration;
     public static volatile int daysPast;
@@ -50,21 +54,46 @@ public class Interfaz extends javax.swing.JFrame {
     public static volatile int numProdPatas;
     private int maxProdPatas;
     
+    //Semaforos Patas
+    private Semaphore mutexPatas;
+    private Semaphore semPatas;
+    private Semaphore semEnsPatas;
+    
     //Datos iniciales Productor de Tornillos
     private int maxStorageTorn;
     public static volatile int numProdTorn;
     private int maxProdTorn;
+    
+    //Semaforos Tornillos
+    private Semaphore mutexTornillos;
+    private Semaphore semTornillos;
+    private Semaphore semEnsTornillos;
     
     //Datos iniciales Productor de Tablas
     private int maxStorageTablas;
     public static volatile int numProdTablas;
     private int maxProdTablas;
     
+    //Semaforos Tablas
+    private Semaphore mutexTablas;
+    private Semaphore semTablas;
+    private Semaphore semEnsTablas;
+    
     //Datos iniciales Ensambladores
     public static volatile int numAssemblers;
     private int maxAssemblers;
     
+    //Arrays de productores
+    private Productor arrayPatas[];
+    private Productor arrayTablas[];
+    private Productor arrayTornillos[];
     
+    
+    //Array de ensambladores
+    private Ensamblador arrayEns[];
+    
+    
+
     
     
     //Jefe y gerente
@@ -169,6 +198,57 @@ public class Interfaz extends javax.swing.JFrame {
         
         //Inicializamos cantidad de ensambladores activos
         this.activeEns.setText(Integer.toString(numAssemblers));
+        
+        //Cantidad de escritorios disponibles
+        this.avPahls.setText(Integer.toString(pahlsDisp));
+        
+        //Estado inicial del jefe y el gerente
+        this.bossTxt.setText("ZZZ");
+        this.managerTxt.setText("ZZZ");
+        
+        
+        //Inicializamos los arrays con sus tamaños
+        this.setArrayPatas(new Productor[maxProdPatas]);
+        this.setArrayTablas(new Productor[maxProdTablas]);
+        this.setArrayTornillos(new Productor[maxProdTorn]);
+        this.setArrayEns(new Ensamblador[maxAssemblers]);
+        
+        //Inicializar semaforo de jefe y mngr
+        
+        //Inicializar variables jefe y mngr
+        
+    }
+
+    public Productor[] getArrayPatas() {
+        return arrayPatas;
+    }
+
+    public void setArrayPatas(Productor[] arrayPatas) {
+        this.arrayPatas = arrayPatas;
+    }
+
+    public Productor[] getArrayTablas() {
+        return arrayTablas;
+    }
+
+    public void setArrayTablas(Productor[] arrayTablas) {
+        this.arrayTablas = arrayTablas;
+    }
+
+    public Productor[] getArrayTornillos() {
+        return arrayTornillos;
+    }
+
+    public void setArrayTornillos(Productor[] arrayTornillos) {
+        this.arrayTornillos = arrayTornillos;
+    }
+
+    public Ensamblador[] getArrayEns() {
+        return arrayEns;
+    }
+
+    public void setArrayEns(Ensamblador[] arrayEns) {
+        this.arrayEns = arrayEns;
     }
     
    
@@ -591,6 +671,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setText("ESCRITORIOS PAHL DISPONIBLES: ");
 
+        managerTxt.setBackground(new java.awt.Color(0, 0, 51));
         jScrollPane15.setViewportView(managerTxt);
 
         jLabel16.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
