@@ -2,30 +2,24 @@
     "days": [
         {
             "timeSeg": 1,
-            "counter": 0
+            "counter": 7
         }
     ],
     "producers": [
         {
             "category": "patas",
-            "quantity": 2,
-            "prodTime": 1,
             "maxStorage": 34,
             "numProducers": 1,
             "maxProducers": 4
         },
         {
             "category": "tornillos",
-            "quantity": 30,
-            "prodTime": 1,
             "maxStorage": 300,
             "numProducers": 1,
             "maxProducers": 3
         },
         {
             "category": "tablas",
-            "quantity": 1,
-            "prodTime": 3,
             "maxStorage": 12,
             "numProducers": 1,
             "maxProducers": 4
@@ -33,7 +27,6 @@
     ],
     "assemblers": [
         {
-            "deskTime": 2,
             "numAssemblers": 1,
             "maxAssemblers": 3
         }

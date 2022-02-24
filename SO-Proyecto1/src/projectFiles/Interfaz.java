@@ -6,6 +6,16 @@
 package projectFiles;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -13,13 +23,7 @@ import java.util.concurrent.Semaphore;
  * @author Nicolás Briceño y Christian Behrens
  */
 public class Interfaz extends javax.swing.JFrame {
-
-    /**
-     * Creates new form Interfaz
-     */
-    public Interfaz() {
-        initComponents();
-    }
+    
     
     private boolean start;
     
@@ -34,6 +38,97 @@ public class Interfaz extends javax.swing.JFrame {
     
     //Contador de escritorios
     public static volatile int pahlsDisp = 0;
+    
+    //Datos iniciales Productor de Patas
+    private int maxStoragePatas;
+    public static volatile int numProdPatas;
+    private int maxProdPatas;
+    
+    //Datos iniciales Productor de Tornillos
+    private int maxStorageTorn;
+    public static volatile int numProdTorn;
+    private int maxProdTorn;
+    
+    //Datos iniciales Productor de Tablas
+    private int maxStorageTablas;
+    public static volatile int numProdTablas;
+    private int maxProdTablas;
+    
+    //Datos iniciales Ensambladores
+    public static volatile int numAssemblers;
+    private int maxAssemblers;
+    
+    /**
+     * Creates new form Interfaz
+     */
+    public Interfaz() {
+        initComponents();
+        readJson();
+    }
+    
+    public void readJson() {
+        
+        JsonParser parser = new JsonParser();
+        Gson gson = new Gson();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("src/projectFiles/data.json"));
+            Object json = gson.fromJson(br, Object.class).toString();
+            String strJson = json.toString();
+            JsonObject jsonObj = parser.parse(strJson).getAsJsonObject();
+            
+            //Variables del Json - dias
+            JsonElement days = jsonObj.get("days").getAsJsonArray().get(0);
+            JsonObject daysObj = parser.parse(days.toString()).getAsJsonObject();
+            double numRound1 = Double.parseDouble(daysObj.get("timeSeg").toString());
+            dayDuration = (int)numRound1; //luego de la conversión, el 1 estaba como 1.0, se convierte a 1
+            double numRound2 = Double.parseDouble(daysObj.get("counter").toString());
+            daysToDeliver = (int)numRound2;
+
+            //Variables del Json - productores
+            for (int i = 0; i < 3; i++) {
+                JsonElement producers = jsonObj.get("producers").getAsJsonArray().get(i);
+                JsonObject producersObj = parser.parse(producers.toString()).getAsJsonObject();
+                switch (i) {
+                    case 0:
+                        double a = Double.parseDouble(producersObj.get("maxStorage").toString());
+                        maxStoragePatas = (int)a;
+                        double b = Double.parseDouble(producersObj.get("numProducers").toString());
+                        numProdPatas = (int)b;
+                        double c = Double.parseDouble(producersObj.get("maxProducers").toString());
+                        maxProdPatas = (int)c;
+                        break;
+                    case 1:
+                        double d = Double.parseDouble(producersObj.get("maxStorage").toString());
+                        maxStorageTorn = (int)d;
+                        double e = Double.parseDouble(producersObj.get("numProducers").toString());
+                        numProdTorn = (int)e;
+                        double f = Double.parseDouble(producersObj.get("maxProducers").toString());
+                        maxProdTorn = (int)f;
+                        break;
+                    case 2:
+                        double g = Double.parseDouble(producersObj.get("maxStorage").toString());
+                        maxStorageTablas = (int)g;
+                        double h = Double.parseDouble(producersObj.get("numProducers").toString());
+                        numProdTablas = (int)h;
+                        double j = Double.parseDouble(producersObj.get("maxProducers").toString());
+                        maxProdTablas = (int)j;
+                        break;
+                }
+            }
+          
+            //Variables del Json - ensambladores
+            JsonElement assemblers = jsonObj.get("assemblers").getAsJsonArray().get(0);
+            JsonObject assemObj = parser.parse(assemblers.toString()).getAsJsonObject();
+            double numRound3 = Double.parseDouble(assemObj.get("numAssemblers").toString());
+            numAssemblers = (int)numRound3; //continúa el problema de que los números del json se formatean como doubles (ejem 1.0 en vez de 1)
+            double numRound4 = Double.parseDouble(assemObj.get("maxAssemblers").toString());
+            maxAssemblers = (int)numRound4;
+            
+        } catch (FileNotFoundException ex) {
+            System.out.println("No se encontró el archivo de texto (json)");
+        }
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
