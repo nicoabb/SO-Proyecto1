@@ -5,65 +5,60 @@
  */
 package projectFiles;
 
+import java.util.concurrent.Semaphore;
+
 /**
  *
  * @author Nicolás Briceño y Christian Behrens
  */
 public class Productor extends Thread{
     
-    private int storage;
-    private int dailyProduction;
-    private int maxStorage;
-    private int quantity;
-    private int time;
-    private int numProducers;
-    private int maxProducers;
+    private String name;
+    private int dayDuration;
+    private double dailyProduce;
+    private Semaphore mutex;
+    private Semaphore semPieces;
+    private Semaphore semEnsamblador;
 
     public Productor(int storage, int dailyProducton, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
 
-        this.storage = storage;
-        this.maxStorage = maxStorage;
-        this.quantity = quantity;
-        this.time = time;
-        this.numProducers = numProducers;
-        this.maxProducers = maxProducers;
+        this.name = name;
+        this.dayDuration = dayDuration;
+        this.dailyProduce = dailyProduce;
+        this.mutex = mutex;
+        this.semPieces = semPieces;
+        this.semEnsamblador = semEnsamblador;
         
+    }
+    
+    public void run() {
+        while (true) {
+            try {
+                semPieces.acquire();
+                Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
+                mutex.acquire();
+                switch (this.name) {
+                    case "patas":
+                        Interfaz.patasDisp++;
+                        break;
+                    case "tornillo":
+                        Interfaz.tornillosDisp++;
+                        break;
+                    case "tablas":
+                        Interfaz.tablasDisp++;
+                        break;
+                }
+                mutex.release();
+                semEnsamblador.release();
+
+            } catch (Exception e) {
+
+            }
+        }
     }
     
     public void callAssembler() {
         
-    }
-
-    public int getStorage() {
-        return storage;
-    }
-
-    public void setStorage(int storage) {
-        this.storage = storage;
-    }
-
-    public int getNumProducers() {
-        return numProducers;
-    }
-
-    public void setNumProducers(int numProducers) {
-        this.numProducers = numProducers;
-    }
-
-    public int getMaxStorage() {
-        return maxStorage;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public int getMaxProducers() {
-        return maxProducers;
     }
     
     
