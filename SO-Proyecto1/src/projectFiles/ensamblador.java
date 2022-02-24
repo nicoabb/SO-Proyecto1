@@ -50,7 +50,7 @@ public class Ensamblador extends Thread {
         
         while(true){
             try{
-                //hacemos aquire a los semáforos de constructor
+                //hacemos aquire a los semáforos de productor
                 semEnsTablas.acquire(tablas);
                 semEnsPatas.acquire(patas);
                 semEnsTornillos.acquire(tornillos);

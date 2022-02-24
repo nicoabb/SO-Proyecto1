@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -93,9 +94,6 @@ public class Interfaz extends javax.swing.JFrame {
     private Ensamblador arrayEns[];
     
     
-
-    
-    
     //Jefe y gerente
     private Jefe boss;
     private Gerente manager;
@@ -170,7 +168,7 @@ public class Interfaz extends javax.swing.JFrame {
             maxAssemblers = (int)numRound4;
             
         } catch (FileNotFoundException ex) {
-            System.out.println("No se encontró el archivo de texto (json)");
+           JOptionPane.showMessageDialog(this, "No se encontró el archivo de texto (json)","ALERTA", JOptionPane.WARNING_MESSAGE);
         }
         
         //Inicializamos valores maximos de productores
@@ -208,50 +206,16 @@ public class Interfaz extends javax.swing.JFrame {
         
         
         //Inicializamos los arrays con sus tamaños
-        this.setArrayPatas(new Productor[maxProdPatas]);
-        this.setArrayTablas(new Productor[maxProdTablas]);
-        this.setArrayTornillos(new Productor[maxProdTorn]);
-        this.setArrayEns(new Ensamblador[maxAssemblers]);
+        arrayPatas= (new Productor[maxProdPatas]);
+        arrayTablas=(new Productor[maxProdTablas]);
+        arrayTornillos=(new Productor[maxProdTorn]);
+        arrayEns=(new Ensamblador[maxAssemblers]);
         
         //Inicializar semaforo de jefe y mngr
         
         //Inicializar variables jefe y mngr
         
     }
-
-    public Productor[] getArrayPatas() {
-        return arrayPatas;
-    }
-
-    public void setArrayPatas(Productor[] arrayPatas) {
-        this.arrayPatas = arrayPatas;
-    }
-
-    public Productor[] getArrayTablas() {
-        return arrayTablas;
-    }
-
-    public void setArrayTablas(Productor[] arrayTablas) {
-        this.arrayTablas = arrayTablas;
-    }
-
-    public Productor[] getArrayTornillos() {
-        return arrayTornillos;
-    }
-
-    public void setArrayTornillos(Productor[] arrayTornillos) {
-        this.arrayTornillos = arrayTornillos;
-    }
-
-    public Ensamblador[] getArrayEns() {
-        return arrayEns;
-    }
-
-    public void setArrayEns(Ensamblador[] arrayEns) {
-        this.arrayEns = arrayEns;
-    }
-    
-   
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -874,7 +838,11 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        if(this.arrayPatas != null){
+            if(Integer.parseInt(this.activePatas.getText()) < Integer.parseInt(this.prPatas.getText())){
+                //Crear nuevo objeto y agregarlo al array
+            }
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
