@@ -42,7 +42,7 @@ public class Interfaz extends javax.swing.JFrame {
     public static volatile int daysPast;
     private int daysToDeliver;
     
-    //Contadores de piezas
+    //Contadores de piezas en el almacen
     public static volatile int patasDisp = 0;
     public static volatile int tablasDisp = 0;
     public static volatile int tornillosDisp = 0;
@@ -83,6 +83,9 @@ public class Interfaz extends javax.swing.JFrame {
     //Datos iniciales Ensambladores
     public static volatile int numAssemblers;
     private int maxAssemblers;
+    
+    //Semaforos enambladores
+    private Semaphore mutexEns;
     
     //Arrays de productores
     private Productor arrayPatas[];
@@ -204,6 +207,26 @@ public class Interfaz extends javax.swing.JFrame {
         this.bossTxt.setText("ZZZ");
         this.managerTxt.setText("ZZZ");
         
+        //Semaforos de productores
+        
+        //Tablas
+        this.mutexTablas = new Semaphore(1);
+        this.semTablas = new Semaphore(Integer.parseInt(this.storeMaxTablas.getText()));
+        this.semEnsTablas = new Semaphore(0);
+        
+        //Tornillos
+        this.mutexTornillos = new Semaphore(1);
+        this.semTornillos = new Semaphore(Integer.parseInt(this.storeMaxTornillos.getText()));
+        this.semEnsTornillos = new Semaphore(0);
+        
+        //Patas
+        this.mutexPatas = new Semaphore(1);
+        this.semPatas = new Semaphore(Integer.parseInt(this.storeMaxPatas.getText()));
+        this.semEnsPatas = new Semaphore(0);
+        
+        //Semaforo ensambladores
+        
+        this.mutexEns = new Semaphore(1);
         
         //Inicializamos los arrays con sus tamaños
         arrayPatas= (new Productor[maxProdPatas]);
@@ -690,7 +713,7 @@ public class Interfaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton9)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane17, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel18))
                 .addGap(41, 41, 41))
@@ -698,10 +721,13 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel17))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel17))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel18)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -870,7 +896,22 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        // TODO add your handling code here:
+        if(!this.start){
+            start = true;
+            
+            //Llenar arrays de productores
+            
+            
+            //Llenar array de ensambladores
+            
+            for (int i = 0, j = 0; i < Integer.parseInt(this.activeEns.getText()); i++) {
+                this.arrayEns[i] = new Ensamblador( dayDuration,  mutexEns,  mutexTablas,  semTablas,  semEnsTablas,  mutexPatas,  semPatas,  semEnsPatas,  mutexTornillos,  semTornillos,  semEnsTornillos);
+                this.arrayEns[i].start();
+            }
+        }
+        
+        
+        
     }//GEN-LAST:event_startButtonActionPerformed
 
     /**
