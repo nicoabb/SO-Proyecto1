@@ -9,23 +9,25 @@ package projectFiles;
  *
  * @author Nicolás Briceño y Christian Behrens
  */
-public class Productor {
+public class productor extends Thread{
     
     private int storage;
+    private int dailyProduction;
     private int maxStorage;
     private int quantity;
     private int time;
     private int numProducers;
     private int maxProducers;
 
-    public Productor(int storage, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
-        
+    public productor(int storage, int dailyProducton, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
+
         this.storage = storage;
         this.maxStorage = maxStorage;
         this.quantity = quantity;
         this.time = time;
         this.numProducers = numProducers;
         this.maxProducers = maxProducers;
+        
     }
     
     public void callAssembler() {
