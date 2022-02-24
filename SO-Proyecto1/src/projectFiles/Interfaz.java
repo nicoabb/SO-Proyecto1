@@ -64,6 +64,13 @@ public class Interfaz extends javax.swing.JFrame {
     public static volatile int numAssemblers;
     private int maxAssemblers;
     
+    
+    
+    
+    //Jefe y gerente
+    private Jefe boss;
+    private Gerente manager;
+    
     /**
      * Creates new form Interfaz
      */
@@ -71,6 +78,8 @@ public class Interfaz extends javax.swing.JFrame {
         initComponents();
         readJson();
     }
+    
+
     
     public void readJson() {
         
@@ -134,7 +143,35 @@ public class Interfaz extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             System.out.println("No se encontró el archivo de texto (json)");
         }
+        
+        //Inicializamos valores maximos de productores
+        this.prPatas.setText(Integer.toString(maxProdPatas));
+        this.prTablas.setText(Integer.toString(maxProdTablas));
+        this.prTornillos.setText(Integer.toString(maxProdTorn));
+        
+        //Inicializamos valores maximos de almacenamiento
+        this.storeMaxPatas.setText(Integer.toString(maxStoragePatas));
+        this.storeMaxTablas.setText(Integer.toString(maxStorageTablas));
+        this.storeMaxTornillos.setText(Integer.toString(maxStorageTorn));
+        
+        //Inicializamos valor máximo de ensambladores
+        this.maxEns.setText(Integer.toString(maxAssemblers));
+        
+        //Inicializamos cantidad en almacen de cada producto
+        this.avPatas.setText(Integer.toString(patasDisp));
+        this.avTablas.setText(Integer.toString(tablasDisp));
+        this.avTornillos.setText(Integer.toString(tornillosDisp));
+        
+        //Inicializamos cantidad de productores activos
+        this.activePatas.setText(Integer.toString(numProdPatas));
+        this.activeTablas.setText(Integer.toString(numProdTablas));
+        this.activeTornillos.setText(Integer.toString(numProdTorn));
+        
+        //Inicializamos cantidad de ensambladores activos
+        this.activeEns.setText(Integer.toString(numAssemblers));
     }
+    
+   
     
     /**
      * This method is called from within the constructor to initialize the form.

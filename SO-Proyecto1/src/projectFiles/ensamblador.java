@@ -11,11 +11,10 @@ import java.util.concurrent.Semaphore;
  * @author Nicolás Briceño y Christian Behrens
  */
 
-public class ensamblador extends Thread {
+public class Ensamblador extends Thread {
     
     private int dayDuration;
-    private int dailyProduce;
-
+    private double dailyProduce=0.5;
     private int tablas=1;
     private int patas=4;
     private int tornillos=40;
@@ -33,9 +32,8 @@ public class ensamblador extends Thread {
     private Semaphore semTornillos; //Productor
     private Semaphore semEnsTornillos; //Consumidor
 
-    public ensamblador(int dayDuration, int dailyProduce, int numAssemblers, int maxAssemblers, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
+    public Ensamblador(int dayDuration,int numAssemblers, int maxAssemblers, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
         this.dayDuration = dayDuration;
-        this.dailyProduce = dailyProduce;
         this.mutexEnsamblador = mutexEnsamblador;
         this.mutexTablas = mutexTablas;
         this.semTablas = semTablas;
@@ -105,9 +103,6 @@ public class ensamblador extends Thread {
         this.dayDuration = dayDuration;
     }
 
-    public int getDailyProduce() {
-        return dailyProduce;
-    }
 
     public void setDailyProduce(int dailyProduce) {
         this.dailyProduce = dailyProduce;
