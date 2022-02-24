@@ -17,16 +17,17 @@ public class Productor extends Thread{
     private int dayDuration;
     private double dailyProduce;
     private Semaphore mutex;
-    private Semaphore semPieces;
+    private Semaphore semPiece;
     private Semaphore semEnsamblador;
+    private boolean stop;
 
-    public Productor(int storage, int dailyProducton, int maxStorage, int quantity, int time, int numProducers, int maxProducers) {
+    public Productor(String name, double dailyProduce, int dayDuration, Semaphore mutex, Semaphore semPiece, Semaphore semEnsamblador) {
 
         this.name = name;
-        this.dayDuration = dayDuration;
         this.dailyProduce = dailyProduce;
+        this.dayDuration = dayDuration;
         this.mutex = mutex;
-        this.semPieces = semPieces;
+        this.semPiece = semPiece;
         this.semEnsamblador = semEnsamblador;
         
     }
@@ -34,18 +35,33 @@ public class Productor extends Thread{
     public void run() {
         while (true) {
             try {
-                semPieces.acquire();
+                semPiece.acquire();
+                if(name=="tablas"){
+                    System.out.println("Sleep" + name);
+                    System.out.println(dayDuration);
+                    System.out.println(dailyProduce);
+                    System.out.println(Math.round((dayDuration * 1000) / dailyProduce));
+                }
+                        
                 Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
                 mutex.acquire();
-                switch (this.name) {
+                
+                
+                switch (name) {
                     case "patas":
                         Interfaz.patasDisp++;
+                        System.out.println("PATA");
+                        Interfaz.avPatas.setText(Integer.toString(Interfaz.patasDisp));
                         break;
-                    case "tornillo":
+                    case "tornillos":
                         Interfaz.tornillosDisp++;
+                        System.out.println("TORNILLO");
+                        Interfaz.avTornillos.setText(Integer.toString(Interfaz.tornillosDisp));
                         break;
                     case "tablas":
+                        System.out.println("TABLA");
                         Interfaz.tablasDisp++;
+                        Interfaz.avTablas.setText(Integer.toString(Interfaz.tablasDisp));
                         break;
                 }
                 mutex.release();
@@ -56,10 +72,15 @@ public class Productor extends Thread{
             }
         }
     }
-    
-    public void callAssembler() {
-        
+
+    public boolean isStop() {
+        return stop;
     }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
+    }
+    
     
     
 }

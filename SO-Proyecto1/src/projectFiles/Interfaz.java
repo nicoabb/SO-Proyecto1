@@ -31,9 +31,9 @@ public class Interfaz extends javax.swing.JFrame {
          }
     }
     private boolean start;
-    private int tornillosDaily=30;
-    private int tablasDaily=1/3;
-    private int patasDaily=1/2;
+    private double tornillosDaily=30;
+    private double tablasDaily=0.33;
+    private double patasDaily=2;
     
     
     private int dayDuration;
@@ -913,9 +913,25 @@ public class Interfaz extends javax.swing.JFrame {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if(!this.start){
             start = true;
-            
+            System.out.println("Inicia");
             //Llenar arrays de productores
+            //Patas
+            for (int i = 0; i < Integer.parseInt(this.activePatas.getText()); i++) {
+                this.arrayPatas[i] = new Productor( "patas",  this.patasDaily,  this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
+                System.out.println("va a empezar las patas");
+                this.arrayPatas[i].start();
+            }
+            //Tablas
+            for (int i = 0; i < Integer.parseInt(this.activeTablas.getText()); i++) {
+                this.arrayTablas[i] = new Productor("tablas", this.tablasDaily ,this.dayDuration, mutexTablas, semTablas, semEnsTablas);
+                this.arrayTablas[i].start();
+            }
             
+            //Tornillos
+            for (int i = 0; i < Integer.parseInt(this.activeTornillos.getText()); i++) {
+                this.arrayTornillos[i] = new Productor("tornillos", this.tornillosDaily ,this.dayDuration, mutexTornillos, semTornillos, semEnsTornillos);
+                this.arrayTornillos[i].start();
+            }
             
             //Llenar array de ensambladores
             
