@@ -18,6 +18,7 @@ public class Ensamblador extends Thread {
     private int tablas=1;
     private int patas=4;
     private int tornillos=40;
+    private boolean stop;
     private Semaphore mutexEnsamblador;
 
     private Semaphore mutexTablas; //Mutex
@@ -32,7 +33,7 @@ public class Ensamblador extends Thread {
     private Semaphore semTornillos; //Productor
     private Semaphore semEnsTornillos; //Consumidor
 
-    public Ensamblador(int dayDuration,int numAssemblers, int maxAssemblers, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
+    public Ensamblador(int dayDuration, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
         this.dayDuration = dayDuration;
         this.mutexEnsamblador = mutexEnsamblador;
         this.mutexTablas = mutexTablas;
@@ -49,50 +50,60 @@ public class Ensamblador extends Thread {
     public void run(){
         
         while(true){
-            try{
-                //hacemos aquire a los semáforos de productor
-                semEnsTablas.acquire(tablas);
-                semEnsPatas.acquire(patas);
-                semEnsTornillos.acquire(tornillos);
-                
-                mutexTablas.acquire();
-                //Saco la cantidad de tablas que necesito
-                
-                Interfaz.tablasDisp-= tablas;
-                Interfaz.avTablas.setText(Integer.toString(Interfaz.tablasDisp));
-                
-                mutexTablas.release();
-                semTablas.release(tablas); //liberamos semáforo de productor
-                
-                mutexPatas.acquire();
-                //Saco la cantidad de patas que necesito
-                Interfaz.patasDisp-= patas;
-                Interfaz.avPatas.setText(Integer.toString(Interfaz.patasDisp));
-                
-                mutexPatas.release();
-                semPatas.release(patas); //liberamos semáforo de productor
-                
-                mutexTornillos.acquire();
-                //Saco la cantidad de tornillos que necesito
-                Interfaz.tornillosDisp-= tornillos;
-                Interfaz.avTornillos.setText(Integer.toString(Interfaz.tornillosDisp));
-                
-                mutexTornillos.release();
-                semTornillos.release(tornillos); //liberamos semáforo de productor
-                
-                Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
-                
-                mutexEnsamblador.acquire();
-                
-                Interfaz.pahlsDisp +=1;
-                Interfaz.avPahls.setText(Integer.toString(Interfaz.pahlsDisp));
-                
-                mutexEnsamblador.release();
-                
-            }catch(Exception e){
-                
+            if (!this.stop) {
+                try{
+                    //hacemos aquire a los semáforos de productor
+                    semEnsTablas.acquire(tablas);
+                    semEnsPatas.acquire(patas);
+                    semEnsTornillos.acquire(tornillos);
+
+                    mutexTablas.acquire();
+                    //Saco la cantidad de tablas que necesito
+
+                    Interfaz.tablasDisp-= tablas;
+                    Interfaz.avTablas.setText(Integer.toString(Interfaz.tablasDisp));
+
+                    mutexTablas.release();
+                    semTablas.release(tablas); //liberamos semáforo de productor
+
+                    mutexPatas.acquire();
+                    //Saco la cantidad de patas que necesito
+                    Interfaz.patasDisp-= patas;
+                    Interfaz.avPatas.setText(Integer.toString(Interfaz.patasDisp));
+
+                    mutexPatas.release();
+                    semPatas.release(patas); //liberamos semáforo de productor
+
+                    mutexTornillos.acquire();
+                    //Saco la cantidad de tornillos que necesito
+                    Interfaz.tornillosDisp-= tornillos;
+                    Interfaz.avTornillos.setText(Integer.toString(Interfaz.tornillosDisp));
+
+                    mutexTornillos.release();
+                    semTornillos.release(tornillos); //liberamos semáforo de productor
+
+                    Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
+
+                    mutexEnsamblador.acquire();
+
+                    Interfaz.pahlsDisp +=1;
+                    Interfaz.avPahls.setText(Integer.toString(Interfaz.pahlsDisp));
+
+                    mutexEnsamblador.release();
+
+                }catch(Exception e){
+
+                }
             }
         }
+    }
+
+    public boolean isStop() {
+        return stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 
     public int getDayDuration() {

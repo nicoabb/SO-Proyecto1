@@ -888,11 +888,28 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
+        if(this.arrayEns != null){
+            if(Integer.parseInt(this.activeEns.getText())>0){
+                this.activeEns.setText(Integer.toString(Integer.parseInt(this.activeEns.getText()) - 1));
+                if (this.start) {
+                    this.arrayEns[Integer.parseInt(activeEns.getText())].setStop(true);
+                }
+            }
+        
+        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
+        if(this.arrayEns != null){
+            if(Integer.parseInt(this.activeEns.getText()) < Integer.parseInt(this.maxEns.getText())){
+                this.arrayEns[Integer.parseInt(this.activeEns.getText())] = new Ensamblador( dayDuration,  mutexEns,  mutexTablas,  semTablas,  semEnsTablas,  mutexPatas,  semPatas,  semEnsPatas,  mutexTornillos,  semTornillos,  semEnsTornillos);
+
+                this.activeEns.setText(Integer.toString(Integer.parseInt(this.activeEns.getText()) + 1));
+                if (this.start) {
+                    this.arrayEns[Integer.parseInt(activeEns.getText()) - 1].start();
+                }
+            }
+        }
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
