@@ -935,7 +935,7 @@ public class Interfaz extends javax.swing.JFrame {
             //Patas
             for (int i = 0; i < Integer.parseInt(this.activePatas.getText()); i++) {
                 this.arrayPatas[i] = new Productor( "patas",  this.patasDaily,  this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
-                System.out.println("va a empezar las patas");
+       
                 this.arrayPatas[i].start();
             }
             //Tablas
