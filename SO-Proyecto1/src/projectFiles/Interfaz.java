@@ -38,7 +38,7 @@ public class Interfaz extends javax.swing.JFrame {
     
     private int dayDuration;
     public static volatile int daysPast;
-    private int daysToDeliver;
+    public static volatile int daysToDeliver;
     
     //Contadores de piezas en el almacen
     public static volatile int patasDisp = 0;
@@ -48,7 +48,7 @@ public class Interfaz extends javax.swing.JFrame {
     //Contador de escritorios
     public static volatile int pahlsDisp = 0;
     
-    //Datos iniciales Productor de Patas
+    //Datos iniciales ProdTornillos de Patas
     private int maxStoragePatas;
     public static volatile int numProdPatas;
     private int maxProdPatas;
@@ -58,7 +58,7 @@ public class Interfaz extends javax.swing.JFrame {
     private Semaphore semPatas;
     private Semaphore semEnsPatas;
     
-    //Datos iniciales Productor de Tornillos
+    //Datos iniciales ProdTornillos de Tornillos
     private int maxStorageTorn;
     public static volatile int numProdTorn;
     private int maxProdTorn;
@@ -68,7 +68,7 @@ public class Interfaz extends javax.swing.JFrame {
     private Semaphore semTornillos;
     private Semaphore semEnsTornillos;
     
-    //Datos iniciales Productor de Tablas
+    //Datos iniciales ProdTornillos de Tablas
     private int maxStorageTablas;
     public static volatile int numProdTablas;
     private int maxProdTablas;
@@ -86,9 +86,9 @@ public class Interfaz extends javax.swing.JFrame {
     private Semaphore mutexEns;
     
     //Arrays de productores
-    private Productor arrayPatas[];
-    private Productor arrayTablas[];
-    private Productor arrayTornillos[];
+    private ProdPatas arrayPatas[];
+    private ProdTablas arrayTablas[];
+    private ProdTornillos arrayTornillos[];
     
     
     //Array de ensambladores
@@ -96,8 +96,11 @@ public class Interfaz extends javax.swing.JFrame {
     
     
     //Jefe y gerente
-    private Jefe boss;
-    private Gerente manager;
+    private Jefe jefe;
+    private Gerente gerente;
+    
+    //Semaforo jefe y gerente
+    private Semaphore mutexCounter;
     
     /**
      * Creates new form Interfaz
@@ -229,14 +232,17 @@ public class Interfaz extends javax.swing.JFrame {
         this.mutexEns = new Semaphore(1);
         
         //Inicializamos los arrays con sus tamaños
-        arrayPatas= (new Productor[maxProdPatas]);
-        arrayTablas=(new Productor[maxProdTablas]);
-        arrayTornillos=(new Productor[maxProdTorn]);
+        arrayPatas= (new ProdPatas[maxProdPatas]);
+        arrayTablas=(new ProdTablas[maxProdTablas]);
+        arrayTornillos=(new ProdTornillos[maxProdTorn]);
         arrayEns=(new Ensamblador[maxAssemblers]);
         
         //Inicializar semaforo de jefe y mngr
         
+        this.mutexCounter= new Semaphore(1); 
         //Inicializar variables jefe y mngr
+        this.jefe = new Jefe(dayDuration, mutexCounter);
+        this.gerente = new Gerente(dayDuration, mutexCounter, daysToDeliver);
         
     }
     
@@ -276,12 +282,12 @@ public class Interfaz extends javax.swing.JFrame {
         prTablas = new javax.swing.JTextPane();
         jScrollPane8 = new javax.swing.JScrollPane();
         prPatas = new javax.swing.JTextPane();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        minusPatas = new javax.swing.JButton();
+        plusPatas = new javax.swing.JButton();
+        minusTorn = new javax.swing.JButton();
+        plusTorn = new javax.swing.JButton();
+        minusTab = new javax.swing.JButton();
+        plusTab = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -310,8 +316,8 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jScrollPane16 = new javax.swing.JScrollPane();
         activeEns = new javax.swing.JTextPane();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
+        minusEns = new javax.swing.JButton();
+        plusEns = new javax.swing.JButton();
         jScrollPane17 = new javax.swing.JScrollPane();
         maxEns = new javax.swing.JTextPane();
         startButton = new javax.swing.JButton();
@@ -332,8 +338,10 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
 
+        avPahls.setEditable(false);
         jScrollPane1.setViewportView(avPahls);
 
+        bossTxt.setEditable(false);
         jScrollPane2.setViewportView(bossTxt);
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
@@ -358,6 +366,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(255, 255, 0));
         jLabel7.setText("Cant. máxima");
 
+        activeTablas.setEditable(false);
         jScrollPane3.setViewportView(activeTablas);
 
         jLabel8.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
@@ -372,70 +381,75 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(255, 255, 0));
         jLabel10.setText("Tablas");
 
+        activePatas.setEditable(false);
         jScrollPane4.setViewportView(activePatas);
 
+        activeTornillos.setEditable(false);
         jScrollPane5.setViewportView(activeTornillos);
 
+        prTornillos.setEditable(false);
         jScrollPane6.setViewportView(prTornillos);
 
+        prTablas.setEditable(false);
         jScrollPane7.setViewportView(prTablas);
 
+        prPatas.setEditable(false);
         jScrollPane8.setViewportView(prPatas);
 
-        jButton2.setBackground(new java.awt.Color(255, 0, 51));
-        jButton2.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jButton2.setText("-");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        minusPatas.setBackground(new java.awt.Color(255, 0, 51));
+        minusPatas.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        minusPatas.setText("-");
+        minusPatas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                minusPatasActionPerformed(evt);
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(0, 204, 51));
-        jButton3.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("+");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        plusPatas.setBackground(new java.awt.Color(0, 204, 51));
+        plusPatas.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        plusPatas.setForeground(new java.awt.Color(255, 255, 255));
+        plusPatas.setText("+");
+        plusPatas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                plusPatasActionPerformed(evt);
             }
         });
 
-        jButton4.setBackground(new java.awt.Color(255, 0, 51));
-        jButton4.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jButton4.setText("-");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        minusTorn.setBackground(new java.awt.Color(255, 0, 51));
+        minusTorn.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        minusTorn.setText("-");
+        minusTorn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                minusTornActionPerformed(evt);
             }
         });
 
-        jButton5.setBackground(new java.awt.Color(0, 204, 51));
-        jButton5.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("+");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        plusTorn.setBackground(new java.awt.Color(0, 204, 51));
+        plusTorn.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        plusTorn.setForeground(new java.awt.Color(255, 255, 255));
+        plusTorn.setText("+");
+        plusTorn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                plusTornActionPerformed(evt);
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(255, 0, 51));
-        jButton6.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jButton6.setText("-");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        minusTab.setBackground(new java.awt.Color(255, 0, 51));
+        minusTab.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        minusTab.setText("-");
+        minusTab.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                minusTabActionPerformed(evt);
             }
         });
 
-        jButton7.setBackground(new java.awt.Color(0, 204, 51));
-        jButton7.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        jButton7.setForeground(new java.awt.Color(255, 255, 255));
-        jButton7.setText("+");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        plusTab.setBackground(new java.awt.Color(0, 204, 51));
+        plusTab.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        plusTab.setForeground(new java.awt.Color(255, 255, 255));
+        plusTab.setText("+");
+        plusTab.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                plusTabActionPerformed(evt);
             }
         });
 
@@ -465,21 +479,21 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jButton6)
+                                        .addComponent(minusTab)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton7))
+                                        .addComponent(plusTab))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jButton4)
+                                        .addComponent(minusTorn)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton5))))
+                                        .addComponent(plusTorn))))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jLabel9)
                                     .addComponent(jLabel8))
                                 .addGap(121, 121, 121)
-                                .addComponent(jButton2)
+                                .addComponent(minusPatas)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3)))
+                                .addComponent(plusPatas)))
                         .addGap(22, 22, 22)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,8 +517,8 @@ public class Interfaz extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton2)
-                        .addComponent(jButton3)
+                        .addComponent(minusPatas)
+                        .addComponent(plusPatas)
                         .addComponent(jLabel9)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -523,15 +537,15 @@ public class Interfaz extends javax.swing.JFrame {
                         .addGap(47, 47, 47)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton4)
-                                .addComponent(jButton5))
+                                .addComponent(minusTorn)
+                                .addComponent(plusTorn))
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton6)
-                                .addComponent(jButton7)))))
+                                .addComponent(minusTab)
+                                .addComponent(plusTab)))))
                 .addGap(48, 48, 48))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
@@ -554,6 +568,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(255, 255, 0));
         jLabel11.setText("Cant. máxima");
 
+        avTablas.setEditable(false);
         jScrollPane9.setViewportView(avTablas);
 
         jLabel12.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
@@ -568,14 +583,19 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel14.setForeground(new java.awt.Color(255, 255, 0));
         jLabel14.setText("Tablas");
 
+        avPatas.setEditable(false);
         jScrollPane10.setViewportView(avPatas);
 
+        avTornillos.setEditable(false);
         jScrollPane11.setViewportView(avTornillos);
 
+        storeMaxTornillos.setEditable(false);
         jScrollPane12.setViewportView(storeMaxTornillos);
 
+        storeMaxTablas.setEditable(false);
         jScrollPane13.setViewportView(storeMaxTablas);
 
+        storeMaxPatas.setEditable(false);
         jScrollPane14.setViewportView(storeMaxPatas);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -661,6 +681,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setText("ESCRITORIOS PAHL DISPONIBLES: ");
 
+        managerTxt.setEditable(false);
         managerTxt.setBackground(new java.awt.Color(0, 0, 51));
         jScrollPane15.setViewportView(managerTxt);
 
@@ -678,27 +699,29 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel17.setForeground(new java.awt.Color(255, 255, 0));
         jLabel17.setText("Trabajando");
 
+        activeEns.setEditable(false);
         jScrollPane16.setViewportView(activeEns);
 
-        jButton8.setBackground(new java.awt.Color(255, 0, 51));
-        jButton8.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jButton8.setText("-");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        minusEns.setBackground(new java.awt.Color(255, 0, 51));
+        minusEns.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        minusEns.setText("-");
+        minusEns.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                minusEnsActionPerformed(evt);
             }
         });
 
-        jButton9.setBackground(new java.awt.Color(0, 204, 51));
-        jButton9.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        jButton9.setForeground(new java.awt.Color(255, 255, 255));
-        jButton9.setText("+");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
+        plusEns.setBackground(new java.awt.Color(0, 204, 51));
+        plusEns.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        plusEns.setForeground(new java.awt.Color(255, 255, 255));
+        plusEns.setText("+");
+        plusEns.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                plusEnsActionPerformed(evt);
             }
         });
 
+        maxEns.setEditable(false);
         jScrollPane17.setViewportView(maxEns);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -712,9 +735,9 @@ public class Interfaz extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jScrollPane16, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton8)
+                        .addComponent(minusEns)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9)))
+                        .addComponent(plusEns)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane17, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -736,8 +759,8 @@ public class Interfaz extends javax.swing.JFrame {
                     .addComponent(jScrollPane16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton8)
-                        .addComponent(jButton9)))
+                        .addComponent(minusEns)
+                        .addComponent(plusEns)))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -754,6 +777,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel19.setForeground(new java.awt.Color(255, 255, 255));
         jLabel19.setText("Días para la entrega:");
 
+        delivery.setEditable(false);
         jScrollPane18.setViewportView(delivery);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -786,7 +810,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addComponent(jLabel19)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jScrollPane18, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(275, Short.MAX_VALUE))
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -855,9 +879,7 @@ public class Interfaz extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 956, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -874,35 +896,82 @@ public class Interfaz extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_closeButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void minusPatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusPatasActionPerformed
+        if(this.arrayPatas != null){
+            if(Integer.parseInt(this.activePatas.getText())>0){
+                this.activePatas.setText(Integer.toString(Integer.parseInt(this.activePatas.getText()) - 1));
+                if (this.start) {
+                    this.arrayPatas[Integer.parseInt(activePatas.getText())].setStop(true);
+                }
+            }
+        
+        }
+    }//GEN-LAST:event_minusPatasActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void plusPatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusPatasActionPerformed
         if(this.arrayPatas != null){
             if(Integer.parseInt(this.activePatas.getText()) < Integer.parseInt(this.prPatas.getText())){
-                //Crear nuevo objeto y agregarlo al array
+                this.arrayPatas[Integer.parseInt(this.activePatas.getText())] = new ProdPatas(this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
+
+                this.activePatas.setText(Integer.toString(Integer.parseInt(this.activePatas.getText()) + 1));
+                if (this.start) {
+                    this.arrayPatas[Integer.parseInt(activePatas.getText()) - 1].start();
+                }
             }
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_plusPatasActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void minusTornActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusTornActionPerformed
+        if(this.arrayTornillos != null){
+            if(Integer.parseInt(this.activeTornillos.getText())>0){
+                this.activeTornillos.setText(Integer.toString(Integer.parseInt(this.activeTornillos.getText()) - 1));
+                if (this.start) {
+                    this.arrayTornillos[Integer.parseInt(activeTornillos.getText())].setStop(true);
+                }
+            }
+        
+        }
+    }//GEN-LAST:event_minusTornActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    private void plusTornActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusTornActionPerformed
+        if(this.arrayTornillos != null){
+            if(Integer.parseInt(this.activeTornillos.getText()) < Integer.parseInt(this.prTornillos.getText())){
+                this.arrayTornillos[Integer.parseInt(this.activeTornillos.getText())] = new ProdTornillos(this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+                this.activeTornillos.setText(Integer.toString(Integer.parseInt(this.activeTornillos.getText()) + 1));
+                if (this.start) {
+                    this.arrayTornillos[Integer.parseInt(activeTornillos.getText()) - 1].start();
+                }
+            }
+        }
+    }//GEN-LAST:event_plusTornActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    private void minusTabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusTabActionPerformed
+        if(this.arrayTablas != null){
+            if(Integer.parseInt(this.activeTablas.getText())>0){
+                this.activeTablas.setText(Integer.toString(Integer.parseInt(this.activeTablas.getText()) - 1));
+                if (this.start) {
+                    this.arrayTablas[Integer.parseInt(activeTablas.getText())].setStop(true);
+                }
+            }
+        
+        }
+    }//GEN-LAST:event_minusTabActionPerformed
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void plusTabActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusTabActionPerformed
+        if(this.arrayTablas != null){
+            if(Integer.parseInt(this.activeTablas.getText()) < Integer.parseInt(this.prTablas.getText())){
+                this.arrayTablas[Integer.parseInt(this.activeTablas.getText())] = new ProdTablas(this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
+
+                this.activeTablas.setText(Integer.toString(Integer.parseInt(this.activeTablas.getText()) + 1));
+                if (this.start) {
+                    this.arrayTablas[Integer.parseInt(activeTablas.getText()) - 1].start();
+                }
+            }
+        }
+    }//GEN-LAST:event_plusTabActionPerformed
+
+    private void minusEnsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minusEnsActionPerformed
         if(this.arrayEns != null){
             if(Integer.parseInt(this.activeEns.getText())>0){
                 this.activeEns.setText(Integer.toString(Integer.parseInt(this.activeEns.getText()) - 1));
@@ -912,9 +981,9 @@ public class Interfaz extends javax.swing.JFrame {
             }
         
         }
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_minusEnsActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void plusEnsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plusEnsActionPerformed
         if(this.arrayEns != null){
             if(Integer.parseInt(this.activeEns.getText()) < Integer.parseInt(this.maxEns.getText())){
                 this.arrayEns[Integer.parseInt(this.activeEns.getText())] = new Ensamblador( dayDuration,  mutexEns,  mutexTablas,  semTablas,  semEnsTablas,  mutexPatas,  semPatas,  semEnsPatas,  mutexTornillos,  semTornillos,  semEnsTornillos);
@@ -925,7 +994,7 @@ public class Interfaz extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_jButton9ActionPerformed
+    }//GEN-LAST:event_plusEnsActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if(!this.start){
@@ -934,19 +1003,19 @@ public class Interfaz extends javax.swing.JFrame {
             //Llenar arrays de productores
             //Patas
             for (int i = 0; i < Integer.parseInt(this.activePatas.getText()); i++) {
-                this.arrayPatas[i] = new Productor( "patas",  this.patasDaily,  this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
+                this.arrayPatas[i] = new ProdPatas(this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
        
                 this.arrayPatas[i].start();
             }
             //Tablas
             for (int i = 0; i < Integer.parseInt(this.activeTablas.getText()); i++) {
-                this.arrayTablas[i] = new Productor("tablas", this.tablasDaily ,this.dayDuration, mutexTablas, semTablas, semEnsTablas);
+                this.arrayTablas[i] = new ProdTablas(this.dayDuration, mutexTablas, semTablas, semEnsTablas);
                 this.arrayTablas[i].start();
             }
             
             //Tornillos
             for (int i = 0; i < Integer.parseInt(this.activeTornillos.getText()); i++) {
-                this.arrayTornillos[i] = new Productor("tornillos", this.tornillosDaily ,this.dayDuration, mutexTornillos, semTornillos, semEnsTornillos);
+                this.arrayTornillos[i] = new ProdTornillos(this.dayDuration, mutexTornillos, semTornillos, semEnsTornillos);
                 this.arrayTornillos[i].start();
             }
             
@@ -956,6 +1025,13 @@ public class Interfaz extends javax.swing.JFrame {
                 this.arrayEns[i] = new Ensamblador( dayDuration,  mutexEns,  mutexTablas,  semTablas,  semEnsTablas,  mutexPatas,  semPatas,  semEnsPatas,  mutexTornillos,  semTornillos,  semEnsTornillos);
                 this.arrayEns[i].start();
             }
+            
+            //Jefe y gerente
+            this.jefe = new Jefe(dayDuration, mutexCounter);
+            this.jefe.start();
+            
+            this.gerente = new Gerente(dayDuration, mutexCounter, daysToDeliver);
+            this.gerente.start();
         }
         
         
@@ -1006,17 +1082,9 @@ public class Interfaz extends javax.swing.JFrame {
     public static volatile javax.swing.JTextPane avPatas;
     public static volatile javax.swing.JTextPane avTablas;
     public static volatile javax.swing.JTextPane avTornillos;
-    private javax.swing.JTextPane bossTxt;
+    public static volatile javax.swing.JTextPane bossTxt;
     private javax.swing.JButton closeButton;
     public static volatile javax.swing.JTextPane delivery;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1058,8 +1126,16 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTextPane managerTxt;
+    public static volatile javax.swing.JTextPane managerTxt;
     private javax.swing.JTextPane maxEns;
+    private javax.swing.JButton minusEns;
+    private javax.swing.JButton minusPatas;
+    private javax.swing.JButton minusTab;
+    private javax.swing.JButton minusTorn;
+    private javax.swing.JButton plusEns;
+    private javax.swing.JButton plusPatas;
+    private javax.swing.JButton plusTab;
+    private javax.swing.JButton plusTorn;
     private javax.swing.JTextPane prPatas;
     private javax.swing.JTextPane prTablas;
     private javax.swing.JTextPane prTornillos;

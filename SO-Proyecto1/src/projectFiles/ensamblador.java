@@ -57,7 +57,8 @@ public class Ensamblador extends Thread {
                     semEnsPatas.acquire(patas);
                     semEnsTornillos.acquire(tornillos);
 
-                    mutexTablas.acquire();
+                    mutexTablas.acquire(tablas);
+                    Thread.sleep(dayDuration*1000*2);
                     //Saco la cantidad de tablas que necesito
 
                     Interfaz.tablasDisp-= tablas;
@@ -81,8 +82,6 @@ public class Ensamblador extends Thread {
 
                     mutexTornillos.release();
                     semTornillos.release(tornillos); //liberamos semáforo de productor
-
-                    Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
 
                     mutexEnsamblador.acquire();
 
