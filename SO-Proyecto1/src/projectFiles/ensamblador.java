@@ -16,9 +16,9 @@ public class ensamblador extends Thread {
     private int dayDuration;
     private int dailyProduce;
 
-    private int tablas;
-    private int patas;
-    private int tornillos;
+    private int tablas=1;
+    private int patas=4;
+    private int tornillos=40;
     private Semaphore mutexEnsamblador;
 
     private Semaphore mutexTablas; //Mutex
@@ -33,12 +33,9 @@ public class ensamblador extends Thread {
     private Semaphore semTornillos; //Productor
     private Semaphore semEnsTornillos; //Consumidor
 
-    public ensamblador(int dayDuration, int dailyProduce, int numAssemblers, int maxAssemblers, int tablas, int patas, int tornillos, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
+    public ensamblador(int dayDuration, int dailyProduce, int numAssemblers, int maxAssemblers, Semaphore mutexEnsamblador, Semaphore mutexTablas, Semaphore semTablas, Semaphore semEnsTablas, Semaphore mutexPatas, Semaphore semPatas, Semaphore semEnsPatas, Semaphore mutexTornillos, Semaphore semTornillos, Semaphore semEnsTornillos) {
         this.dayDuration = dayDuration;
         this.dailyProduce = dailyProduce;
-        this.tablas = tablas;
-        this.patas = patas;
-        this.tornillos = tornillos;
         this.mutexEnsamblador = mutexEnsamblador;
         this.mutexTablas = mutexTablas;
         this.semTablas = semTablas;
@@ -62,26 +59,36 @@ public class ensamblador extends Thread {
                 
                 mutexTablas.acquire();
                 //Saco la cantidad de tablas que necesito
-                //Interfaz.tablas-= tablas
+                
+                Interfaz.tablasDisp-= tablas;
+                Interfaz.avTablas.setText(Integer.toString(Interfaz.tablasDisp));
+                
                 mutexTablas.release();
                 semTablas.release(tablas); //liberamos semáforo de productor
                 
                 mutexPatas.acquire();
-                //Saco la cantidad de tablas que necesito
-                //Interfaz.tablas-= tablas
+                //Saco la cantidad de patas que necesito
+                Interfaz.patasDisp-= patas;
+                Interfaz.avPatas.setText(Integer.toString(Interfaz.patasDisp));
+                
                 mutexPatas.release();
                 semPatas.release(patas); //liberamos semáforo de productor
                 
                 mutexTornillos.acquire();
-                //Saco la cantidad de tablas que necesito
-                //Interfaz.tablas-= tablas
+                //Saco la cantidad de tornillos que necesito
+                Interfaz.tornillosDisp-= tornillos;
+                Interfaz.avTornillos.setText(Integer.toString(Interfaz.tornillosDisp));
+                
                 mutexTornillos.release();
                 semTornillos.release(tornillos); //liberamos semáforo de productor
                 
                 Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
                 
                 mutexEnsamblador.acquire();
-                //Sumamos 1 escritorio producido al contador
+                
+                Interfaz.pahlsDisp +=1;
+                Interfaz.avPahls.setText(Integer.toString(Interfaz.pahlsDisp));
+                
                 mutexEnsamblador.release();
                 
             }catch(Exception e){
