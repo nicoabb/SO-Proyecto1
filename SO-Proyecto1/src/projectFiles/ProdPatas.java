@@ -34,12 +34,9 @@ public class ProdPatas extends Thread{
         while (!stop) {
             try {
                 semPiece.acquire();
-                
-                        
+                     
                 Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
                 mutex.acquire();
-                
-                
                 
                 Interfaz.patasDisp++;
                 Interfaz.avPatas.setText(Integer.toString(Interfaz.patasDisp));

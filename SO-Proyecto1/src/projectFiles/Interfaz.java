@@ -12,8 +12,6 @@ import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.Reader;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 import javax.swing.JOptionPane;
 
@@ -23,13 +21,6 @@ import javax.swing.JOptionPane;
  */
 public class Interfaz extends javax.swing.JFrame {
     
-    public static void esperar(int seg){
-        try {
-            Thread.sleep(seg * 1000);
-         } catch (Exception e) {
-            
-         }
-    }
     private boolean start;
     private double tornillosDaily=30;
     private double tablasDaily=1;//ERRORRRRRRRRRR
@@ -110,8 +101,7 @@ public class Interfaz extends javax.swing.JFrame {
         readJson();
     }
     
-
-    
+    //Función encargada de leer los datos del archivo inicial
     public void readJson() {
         
         JsonParser parser = new JsonParser();
@@ -999,12 +989,10 @@ public class Interfaz extends javax.swing.JFrame {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if(!this.start){
             start = true;
-            System.out.println("Inicia");
             //Llenar arrays de productores
             //Patas
             for (int i = 0; i < Integer.parseInt(this.activePatas.getText()); i++) {
                 this.arrayPatas[i] = new ProdPatas(this.dayDuration,  mutexPatas,  semPatas,  semEnsPatas);
-       
                 this.arrayPatas[i].start();
             }
             //Tablas

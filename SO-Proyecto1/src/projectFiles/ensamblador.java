@@ -52,7 +52,7 @@ public class Ensamblador extends Thread {
         while(true){
             if (!this.stop) {
                 try{
-                    //hacemos aquire a los semáforos de productor
+                    //hacemos acquire a los semáforos de productor
                     semEnsTablas.acquire(tablas);
                     semEnsPatas.acquire(patas);
                     semEnsTornillos.acquire(tornillos);

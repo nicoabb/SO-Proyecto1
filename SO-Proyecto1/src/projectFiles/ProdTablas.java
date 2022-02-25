@@ -39,7 +39,6 @@ public class ProdTablas extends Thread{
                 Thread.sleep(1000*dayDuration*3);
                 mutex.acquire();
                 Interfaz.tablasDisp++;
-                System.out.println(Interfaz.tablasDisp);
                 Interfaz.avTablas.setText(Integer.toString(Interfaz.tablasDisp));
 
                 mutex.release();

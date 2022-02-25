@@ -36,11 +36,8 @@ public class ProdTornillos extends Thread{
             try {
                 semPiece.acquire();
                
-                        
                 Thread.sleep(Math.round((dayDuration * 1000) / dailyProduce));
                 mutex.acquire();
-                
-                
                 
                 Interfaz.tornillosDisp++;
 

@@ -39,7 +39,6 @@ public class Gerente extends Thread{
                     Interfaz.delivery.setText(Integer.toString(daysToDeliver));
 
                 }else{
-                    
                     Thread.sleep((dayDuration*1000)/3);
                 
             }
